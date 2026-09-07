@@ -1,0 +1,20 @@
+[package]
+name = "gsmi_wrapper"
+version = "0.1.0"
+description = "$GSMI SOL door. Ticket PDA. No admin after init."
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "gsmi_wrapper"
+
+[features]
+default = []
+no-entrypoint = []
+cpi = ["no-entrypoint"]
+idl-build = ["anchor-lang/idl-build", "anchor-spl/idl-build"]
+local-crank = []
+
+[dependencies]
+anchor-lang = { version = "1.1.2", features = ["init-if-needed"] }
+anchor-spl = "1.1.2"

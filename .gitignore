@@ -1,0 +1,10 @@
+target/
+.anchor/
+node_modules/
+test-ledger/
+**/*-keypair.json
+.env
+.env.*
+id.json
+*.so
+.DS_Store
