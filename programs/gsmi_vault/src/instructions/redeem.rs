@@ -5,8 +5,8 @@ use crate::constants::*;
 use crate::error::GsmiError;
 use crate::events::RedeemEvent;
 use crate::math::redeem_out;
+use crate::token_io::{read_ata, transfer_seat, token22};
 use crate::state::Vault;
-use crate::token_io::{read_ata, transfer_seat};
 
 /// remaining_accounts, 8 seats × 2:
 ///   vault_ata, user_ata
@@ -37,7 +37,7 @@ pub struct Redeem<'info> {
     pub token_2022_program: Program<'info, Token2022>,
 }
 
-pub fn handler(ctx: Context<Redeem>, shares: u64) -> Result<()> {
+pub fn handler<'a>(ctx: Context<'a, Redeem<'a>>, shares: u64) -> Result<()> {
     require!(shares > 0, GsmiError::ZeroAmount);
     require!(
         ctx.remaining_accounts.len() == BASKET_SIZE * 2,

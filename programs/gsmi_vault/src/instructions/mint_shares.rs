@@ -1,12 +1,12 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{self, Mint, MintTo, Token, TokenAccount};
+use crate::token_io::{read_ata, transfer_seat, token22};
 use anchor_spl::token_2022::Token2022;
 use crate::constants::*;
 use crate::error::GsmiError;
 use crate::events::MintEvent;
 use crate::math::{min_slice, nets_of};
 use crate::state::Vault;
-use crate::token_io::{read_ata, transfer_seat};
 
 /// remaining_accounts, 8 seats × 3:
 ///   user_ata, vault_ata, treasury_ata

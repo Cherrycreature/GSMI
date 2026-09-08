@@ -3,23 +3,18 @@ use anchor_lang::solana_program::{
     instruction::{AccountMeta, Instruction},
     program::invoke_signed,
 };
-use anchor_spl::token::spl_token;
-use anchor_spl::token_2022::spl_token_2022;
 use crate::error::GsmiError;
+use std::str::FromStr;
 
 pub fn tokenkeg() -> Pubkey {
-    spl_token::ID
+    Pubkey::from_str("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA").unwrap()
 }
 pub fn token22() -> Pubkey {
-    spl_token_2022::ID
+    Pubkey::from_str("TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb").unwrap()
 }
 
-/// Base SPL / Token-2022 token-account fields. Extensions live past byte 165.
 pub fn read_ata(ai: &AccountInfo) -> Result<(Pubkey, Pubkey, u64)> {
-    require!(
-        *ai.owner == tokenkeg() || *ai.owner == token22(),
-        GsmiError::BadAccounts
-    );
+    require!(*ai.owner == tokenkeg() || *ai.owner == token22(), GsmiError::BadAccounts);
     let data = ai.try_borrow_data()?;
     require!(data.len() >= 72, GsmiError::BadAccounts);
     let mint = Pubkey::new_from_array(data[0..32].try_into().unwrap());
@@ -64,10 +59,6 @@ pub fn transfer_seat<'info>(
         return err!(GsmiError::BadAccounts);
     };
     let ix = transfer_ix(program.key, from.key, to.key, authority.key, amount);
-    invoke_signed(
-        &ix,
-        &[from, to, authority, program],
-        signer_seeds,
-    )
-    .map_err(|_| error!(GsmiError::BadAccounts))
+    invoke_signed(&ix, &[from, to, authority, program], signer_seeds)
+        .map_err(|_| error!(GsmiError::BadAccounts))
 }

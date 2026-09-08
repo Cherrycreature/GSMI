@@ -35,10 +35,11 @@ pub mod gsmi_vault {
         instructions::mint_shares::handler(ctx, offered, shares, min_shares_out)
     }
 
-    pub fn redeem(ctx: Context<Redeem>, shares: u64) -> Result<()> {
+    pub fn redeem<'a>(ctx: Context<'a, Redeem<'a>>, shares: u64) -> Result<()> {
         instructions::redeem::handler(ctx, shares)
     }
 
+    /// One-shot. Writes GSMI / GSMI / https://gsmi.io/gsmi.json and locks it.
     pub fn write_share_meta(ctx: Context<WriteShareMeta>) -> Result<()> {
         instructions::write_share_meta::handler(ctx)
     }
