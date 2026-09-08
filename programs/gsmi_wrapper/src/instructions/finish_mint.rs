@@ -60,9 +60,7 @@ pub fn handler<'a>(
     min_shares: u64,
 ) -> Result<()> {
     require!(min_shares > 0, WrapError::Slip);
-    if min_shares < ctx.accounts.ticket.min_out {
-        require!(ctx.accounts.cranker.key() == ctx.accounts.ticket.owner, WrapError::NotOwner);
-    }
+    require!(min_shares >= ctx.accounts.ticket.min_out, WrapError::Slip);
     require!(ctx.remaining_accounts.len() >= BASKET_SIZE, WrapError::SeatMismatch);
     let ticket_key = ctx.accounts.ticket.key();
     for i in 0..BASKET_SIZE {

@@ -6,11 +6,12 @@ use crate::state::{Side, Status, Ticket};
 use crate::token_io::read_ata;
 
 /// Anyone. Move this seat's native budget into its WSOL ATA.
+/// Desk signs as cranker. Ticket owner does not need to sign.
 /// No sync CPI — the desk sends `sync_native` as the next ix in the same tx.
-/// Program-side sync was UnbalancedInstruction when Jupiter followed.
 #[derive(Accounts)]
 #[instruction(seat: u8)]
 pub struct WrapSeat<'info> {
+    /// CHECK: permissionless. desk or owner.
     pub cranker: Signer<'info>,
     #[account(
         seeds = [TICKET_SEED, ticket.owner.as_ref(), ticket.nonce.to_le_bytes().as_ref()],

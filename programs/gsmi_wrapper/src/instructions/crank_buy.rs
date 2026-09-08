@@ -57,13 +57,15 @@ pub fn handler<'a>(ctx: Context<'a, CrankBuy<'a>>, seat: u8, data: Vec<u8>) -> R
 
     require!(ctx.accounts.seat_wsol.amount > 0, WrapError::BadOut);
 
+    // Seat is a PDA. It cannot sign the outer tx. Mark it signer only on the
+    // Jupiter CPI; invoke_signed below attaches the seat signature.
+    let seat_key = ctx.accounts.seat_acc.key();
     let metas: Vec<AccountMeta> = ctx.remaining_accounts[1..].iter().map(|a| {
+        let signer = a.key() == seat_key;
         if a.is_writable {
-            if a.is_signer { AccountMeta::new(a.key(), true) } else { AccountMeta::new(a.key(), false) }
-        } else if a.is_signer {
-            AccountMeta::new_readonly(a.key(), true)
+            AccountMeta::new(a.key(), signer)
         } else {
-            AccountMeta::new_readonly(a.key(), false)
+            AccountMeta::new_readonly(a.key(), signer)
         }
     }).collect();
 
